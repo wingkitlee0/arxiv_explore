@@ -1,0 +1,7 @@
+'astro-ph.GA' : 0,
+'astro-ph.SR' : 1,
+'astro-ph.IM' : 2,
+'astro-ph.EP' : 3,
+'astro-ph.HE' : 4,
+'astro-ph.CO' : 5
+
