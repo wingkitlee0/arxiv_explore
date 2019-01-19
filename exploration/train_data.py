@@ -14,6 +14,8 @@ label2target = { v:k for k,v in target_name_dict.items()}
 
 files = ["data/2014astroph_p.h5",
          "data/2015astroph_p.h5",
+         "data/2016astroph_p.h5",
+         "data/2017astroph_p.h5",
         ]
 
 abstracts = []
@@ -67,9 +69,9 @@ vocab_size = 10000
 
 #%%
 model = keras.Sequential()
-model.add(keras.layers.Embedding(vocab_size, 16))
+model.add(keras.layers.Embedding(vocab_size, 64))
 model.add(keras.layers.GlobalAveragePooling1D())
-model.add(keras.layers.Dense(16, activation=tf.nn.relu))
+model.add(keras.layers.Dense(64, activation=tf.nn.relu))
 model.add(keras.layers.Dense(6, activation=tf.nn.sigmoid))
 model.summary()
 
@@ -85,7 +87,8 @@ history = model.fit(train_seq, train_labels_onehot, epochs=10, steps_per_epoch=3
 
 
 #%%
-model.evaluate(test_seq, test_labels_onehot, steps=10)
+ev  = model.evaluate(test_seq, test_labels_onehot, steps=10)
+print(ev)
 
 
 #%%
@@ -111,3 +114,4 @@ print(label2target[ii])
 
 
 
+model.save('my_model.h5')
