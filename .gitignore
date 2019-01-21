@@ -1,0 +1,11 @@
+# GloVe files
+exploration/glove.6B/
+
+#
+*.ipynb_checkpoints
+
+# vs code
+.vscode/
+
+# 
+*__pycache__
