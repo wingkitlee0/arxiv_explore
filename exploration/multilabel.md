@@ -36,7 +36,7 @@ tokenizer = Tokenizer(num_words=max_words)
 tokenizer.fit_on_texts(texts)
 ```
 Here `max_words` is the maximum size of the dictionary **during conversion** (see the discussion [here](https://github.com/keras-team/keras/issues/7551
-)). This means that the Tokenizer still stores every unique word it encounters during the `fit_on_texts()` routiner. The full dictionary can be found using `tokenizer.word_index`, which returns a python dictionary (e.g., `{'astronomy' : 10}`). The maximum possible integer can be larger than `max_words` (of course, the resultant dictionary can be smaller, depending on the type of document).
+)). This means that the Tokenizer still stores every unique word it encounters during the `fit_on_texts()` routine. The full dictionary can be found using `tokenizer.word_index`, which returns a python dictionary (e.g., `{'astronomy' : 10}`). The maximum possible integer can be larger than `max_words` (of course, the resultant dictionary can be smaller, depending on the type of document).
 
 #### Conversion to integer sequence
 To convert the list `texts` to a list of sequences, we can use:

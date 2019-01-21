@@ -5,6 +5,9 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import model_from_json, model_from_config
 from simpletokenizer import SimpleTokenizer
 
+config_file = "config.json"
+
+"""
 maxlen = 100
 dictionary_file = "dictionary.json"
 model_file = "model.json"
@@ -18,23 +21,39 @@ target_name_dict = { 'astro-ph.GA' : 0,
                      'astro-ph.CO' : 5
                    }
 target_name = [k for k, v in target_name_dict.items()]
+"""
 
 class AstrophPrediction:
     """Main class for loading the deep learning model and make predictions
     """
-    def __init__(self):
+    def __init__(self, config_json=config_file):
         """
         
         """
-        self.tokenizer = SimpleTokenizer(dictionary_file)
+        self.load_config(config_json)
 
-        with open(model_file, 'r') as json_file:
+        self.tokenizer = SimpleTokenizer(self.dictionary_file)
+
+        with open(self.model_file, 'r') as json_file:
             architecture = json_file.read()
             self.model = model_from_json(architecture)
 
         self.model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['acc'])
-        self.model.load_weights(model_weights_file, by_name=True)
+        self.model.load_weights(self.model_weights_file, by_name=True)
         print("# Done loading the model and its weights.")
+
+
+    def load_config(self, config_json):
+        self.config_json = config_json
+        with open(self.config_json, "r") as jf:
+            self.config = json.load(jf)
+
+        self.maxlen = self.config['maxlen']
+        self.dictionary_file = self.config['dictionary_file']
+        self.model_file = self.config['model_file']
+        self.model_weights_file = self.config['model_weights_file']
+        self.target_name_dict = self.config['target_name_dict']
+        self.target_name = [k for k, v in self.target_name_dict.items()]
 
     def predict(self, texts):
         """routine to make prediction on texts
@@ -44,7 +63,7 @@ class AstrophPrediction:
         """
         seq = pad_sequences(
                 self.tokenizer.texts_to_sequences(texts),
-                maxlen=maxlen)
+                maxlen=self.maxlen)
         return self.model.predict_proba(seq)
 
 
@@ -64,7 +83,7 @@ if __name__=='__main__':
 
     results = prediction.predict(texts)
     
-    print(target_name)
+    print(prediction.target_name)
     for p in results:
         print(p)
-        print(target_name[np.argmax(p)])
+        print(prediction.target_name[np.argmax(p)])
