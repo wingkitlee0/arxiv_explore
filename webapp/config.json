@@ -1,13 +1,15 @@
 {
     "maxlen" : 100,
-    "dictionary_file" : "data/dictionary.json",
-    "model_file" : "data/model.json",
-    "model_weights_file" : "data/model_weights.h5",
+    "maxwords" : 10000,
+    "dictionary" : "dictionary.json",
+    "model" : "model.json",
+    "model_weights" : "model_weights.h5",
     "target_name_dict" : { "astro-ph.GA" : 0,
                         "astro-ph.SR" : 1,
                         "astro-ph.IM" : 2,
                         "astro-ph.EP" : 3,
                         "astro-ph.HE" : 4,
                         "astro-ph.CO" : 5
-                    }  
+                    },
+    "s3_bucket_name" : "ml-bucket-3"
 }

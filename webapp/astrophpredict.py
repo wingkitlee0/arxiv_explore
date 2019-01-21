@@ -1,27 +1,14 @@
 import numpy as np
 import json
+import boto3
+import uuid
+import os
 
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.models import model_from_json, model_from_config
 from simpletokenizer import SimpleTokenizer
 
 config_file = "config.json"
-
-"""
-maxlen = 100
-dictionary_file = "dictionary.json"
-model_file = "model.json"
-model_weights_file = "model_weights.h5"
-
-target_name_dict = { 'astro-ph.GA' : 0,
-                     'astro-ph.SR' : 1,
-                     'astro-ph.IM' : 2,
-                     'astro-ph.EP' : 3,
-                     'astro-ph.HE' : 4,
-                     'astro-ph.CO' : 5
-                   }
-target_name = [k for k, v in target_name_dict.items()]
-"""
 
 class AstrophPrediction:
     """Main class for loading the deep learning model and make predictions
@@ -31,29 +18,73 @@ class AstrophPrediction:
         
         """
         self.load_config(config_json)
+        print("# Done loading configuration")
 
-        self.tokenizer = SimpleTokenizer(self.dictionary_file)
+        # download the files
+        self.filepaths = self.get_s3_files()
+        print("# Done downloading the model files")
 
-        with open(self.model_file, 'r') as json_file:
+        self.tokenizer = SimpleTokenizer(self.filepaths['dictionary'], max_words=self.max_words)
+
+        with open(self.filepaths['model'], 'r') as json_file:
             architecture = json_file.read()
             self.model = model_from_json(architecture)
 
         self.model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['acc'])
-        self.model.load_weights(self.model_weights_file, by_name=True)
+        self.model.load_weights(self.filepaths['model_weights'], by_name=False)
         print("# Done loading the model and its weights.")
 
 
     def load_config(self, config_json):
+        """
+        load the config json file
+        """
         self.config_json = config_json
         with open(self.config_json, "r") as jf:
             self.config = json.load(jf)
 
         self.maxlen = self.config['maxlen']
-        self.dictionary_file = self.config['dictionary_file']
-        self.model_file = self.config['model_file']
-        self.model_weights_file = self.config['model_weights_file']
+        self.max_words = self.config['maxwords']
+        # target names
         self.target_name_dict = self.config['target_name_dict']
         self.target_name = [k for k, v in self.target_name_dict.items()]
+        self.s3_bucket_name = self.config['s3_bucket_name']
+
+
+        # file names
+        self.keys = ['dictionary', 'model', 'model_weights']
+        self.dictionary_name = self.config['dictionary']
+        self.model_name = self.config['model']
+        self.model_weights_name = self.config['model_weights']
+        self.filedict = {'dictionary' : self.dictionary_name,
+                        'model' : self.model_name,
+                        'model_weights' : self.model_weights_name}
+
+
+    def get_s3_files(self):
+        """
+        get the files from s3 bucket if the files do not exist
+        """
+        s3_client = boto3.client('s3')
+        #download 
+        filepaths = {}
+
+
+        download_dir = "/tmp"
+        for key, filename in self.filedict.items():
+            file_found = False
+            for f in os.listdir(download_dir):
+                if f.endswith(filename):
+                    filepaths[key] = os.path.join(download_dir, f)
+                    file_found = True
+
+            if not file_found:
+                print("# downloading {}".format(filename))
+                download_path = '/tmp/{}{}'.format(uuid.uuid4(), filename)
+                s3_client.download_file(self.s3_bucket_name, filename, download_path)
+                filepaths[key] = download_path      
+
+        return filepaths      
 
     def predict(self, texts):
         """routine to make prediction on texts
@@ -78,7 +109,8 @@ if __name__=='__main__':
          "We have observed a new sun spot.",
          "We found that Pluto is indeed a Planet.",
          "We found a new neutron star. This neutron star has a very strong magnetic field.",
-         "We discovered the B-modes in the cosmological microwave background, which are the imprints of the primodal density fluctuation. This has a great impact on the understanding of cosmology and inflation."
+         "We discovered the B-modes in the cosmological microwave background, which are the imprints of the primodal density fluctuation. This has a great impact on the understanding of cosmology and inflation.",
+         "Enter your text here"
         ]
 
     results = prediction.predict(texts)
