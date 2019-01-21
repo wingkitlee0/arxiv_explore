@@ -8,14 +8,14 @@
           border: 3px solid rgb(49, 136, 207);
           padding: 10px;
         }
-        </style>
+</style>
 </head>
 <body>
     <div class="center">
-    <h1>Simple web app for analyzing text</h1>
-    <h2>The date and time on the server is: {{ time }}</h2>
-    <p>The CPU has {{ cpucount }} cores.</p>
-    <p>This is a simple webapp for the "20 news group" example in machine learning textbooks. For simplicity, we have only include the following categories: 'alt.atheism', 'comp.graphics', 'sci.med', 'sci.space'.</p>
+    <h1>Simple web app for analyzing abstracts</h1>
+    <h2>The date and time (UTC) on the server is: {{ time }}</h2>
+    <p>The CPU has {{ cpucount }} core(s).</p>
+    <p>This is a simple webapp for analyzing user-input abstract and classify it as one of the category in astro-ph.</p>
     <p>Feel free to enter some text below and press "submit". It will return the predicted category.</p>
     <br>
     <form role="form" method='POST' action="{{ url_for('main') }}">
@@ -32,7 +32,7 @@
     {% if results %}
     <p>{{ results.text }} </p>
     <p></p>
-    <p>The category is {{ results.label }}</p>
+    <p >The predicted category is {{ results.label }}</p>
     {% endif %}
     <br>
     {% for error in errors %}
