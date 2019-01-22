@@ -3,6 +3,7 @@ import os
 import numpy as np
 
 from flask import Flask, render_template, request
+import tensorflow as tf
 from astrophpredict import AstrophPrediction
 from tensorflow.contrib.keras.api.keras import backend as K
 
@@ -20,7 +21,8 @@ def main():
    templateData = {
       'title' : 'Web App for classifying abstracts on astro-ph',
       'time': timeString,
-      'cpucount' : cpuCount
+      'cpucount' : cpuCount,
+      'tfversion' : tf.__version__
       }
    
    if request.method == 'GET':
@@ -37,4 +39,4 @@ def main():
       return render_template('main.html', results=results, **templateData)
 
 if __name__ == "__main__":
-   app.run(host='0.0.0.0', port=80, debug=False, threaded=False)
+   app.run(host='0.0.0.0', port=5000, debug=True, threaded=False)
