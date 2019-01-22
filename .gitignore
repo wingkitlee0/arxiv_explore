@@ -9,3 +9,6 @@ exploration/glove.6B/
 
 # 
 *__pycache__
+
+#
+venv/
