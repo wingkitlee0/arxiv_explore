@@ -48,6 +48,8 @@ class AstrophPrediction:
         # target names
         self.target_name_dict = self.config['target_name_dict']
         self.target_name = [k for k, v in self.target_name_dict.items()]
+        self.target_fullname_dict = self.config['target_fullname_dict']
+        self.target_fullname = [k for k, v in self.target_fullname_dict.items()]
         self.s3_bucket_name = self.config['s3_bucket_name']
 
 

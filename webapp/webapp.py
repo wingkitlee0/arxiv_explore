@@ -32,8 +32,9 @@ def main():
 
       probability = prediction.predict([request.form['myTextArea']])[0] 
       ind = np.argmax(probability)
-      label = prediction.target_name[ind]
-      
+      label = prediction.target_fullname[ind]
+
+
       results = {'text' : resultText, 
                  'label' : label}
       return render_template('main.html', results=results, **templateData)

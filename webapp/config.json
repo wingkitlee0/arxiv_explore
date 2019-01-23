@@ -11,5 +11,13 @@
                         "astro-ph.HE" : 4,
                         "astro-ph.CO" : 5
                     },
+    "target_fullname_dict" : {
+        "GA: Astrophysics of Galaxies" : 0,
+        "SR: Solar and Stellar Astrophysics" : 1,
+        "IM: Instrumentation and Methods for Astrophysics" : 2,
+        "EP: Earth and Planetary Astrophysics" : 3,
+        "HE: High Energy Astrophysical Phenomena" : 4,
+        "CO: Cosmology and Nongalactic Astrophysics" : 5
+    },
     "s3_bucket_name" : "ml-bucket-3"
 }
